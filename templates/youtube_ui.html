@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ExplAIn</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #333;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            color: #4a5568;
+        }
+
+        .sidebar button {
+            width: 150px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background: #d1d5db;
+        }
+
+        .content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        p {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+        }
+
+        .input-box {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .process-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .process-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #output {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f7fafc;
+            color: #4a5568;
+            white-space: pre-wrap;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>ExplAIn Menu</h2>
+        <button onclick="showYouTubeTool()">YouTube Tool</button>
+        <button onclick="showOption2()">Option 2</button>
+        <button onclick="showOption3()">Option 3</button>
+    </div>
+
+    <div class="content">
+        <div class="container" id="youtubeTool" style="display: block;">
+            <h1>YouTube Audio Extractor</h1>
+            <p>Enter a YouTube video link to extract audio, transcribe, and summarize.</p>
+            <input type="text" id="youtubeLink" class="input-box" placeholder="Enter YouTube Link">
+            <button class="process-button" onclick="processLink()">Process</button>
+            <div id="output"></div>
+        </div>
+        <div class="container" id="option2" style="display: none;">
+            <h2>Option 2 Content</h2>
+            <p>Content for Option 2 goes here.</p>
+        </div>
+        <div class="container" id="option3" style="display: none;">
+            <h2>Option 3 Content</h2>
+            <p>Content for Option 3 goes here.</p>
+        </div>
+    </div>
+
+    <script>
+        function showYouTubeTool() {
+            document.getElementById("youtubeTool").style.display = "block";
+            document.getElementById("option2").style.display = "none";
+            document.getElementById("").style.display = "none";
+        }
+
+        function showOption2() {
+            document.getElementById("youtubeTool").style.display = "none";
+            document.getElementById("option2").style.display = "block";
+            document.getElementById("option3").style.display = "none";
+        }
+
+        function showOption3() {
+            document.getElementById("youtubeTool").style.display = "none";
+            document.getElementById("option2").style.display = "none";
+            document.getElementById("option3").style.display = "block";
+        }
+
+        function processLink() {
+            var youtubeUrl = document.getElementById("youtubeLink").value;
+            if (youtubeUrl) {
+                document.getElementById("output").innerText = "Processing, please wait...";
+                fetch('/process_youtube_link', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'youtubeLink=' + youtubeUrl
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("output").innerText = "Error: " + data.error;
+                    } else {
+                        document.getElementById("output").innerText = "Transcription:\n\n" + data.transcription + "\n\nSummary:\n\n" + data.summary;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("output").innerText = "Fetch error: " + error;
+                });
+            } else {
+                document.getElementById("output").innerText = "Please enter a YouTube video URL.";
+            }
+        }
+    </script>
+</body>
+</html>
+
+
